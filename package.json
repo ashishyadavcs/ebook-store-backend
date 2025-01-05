@@ -1,0 +1,31 @@
+{
+    "name": "ebookstore-api",
+    "version": "1.0.0",
+    "type": "module",
+    "main": "node src/server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "dev": "nodemon src/server.js",
+        "format:check": "prettier --check '*/**/*.{js,jsx,ts,tsx,css}'",
+        "format:fix": "prettier --write '*/**/*.{js,jsx,ts,tsx,css}'"
+    },
+    "keywords": [
+        "frontendzone"
+    ],
+    "author": "ashish yadav",
+    "license": "ISC",
+    "description": "",
+    "dependencies": {
+        "bcrypt": "^5.1.1",
+        "cookie-parser": "^1.4.7",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.7",
+        "express": "^4.21.2",
+        "express-validator": "^7.2.1",
+        "http-errors": "^2.0.0",
+        "jsonwebtoken": "^9.0.2",
+        "mongoose": "^8.9.2",
+        "nodemon": "^3.1.9",
+        "prettier": "^3.4.2"
+    }
+}
