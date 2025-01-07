@@ -18,12 +18,13 @@ export class Userservice {
             throw error
         }
     }
+
     async findByEmail(email) {
-        return User.findOne({
+        return await User.findOne({
             email,
         });
     }
     async findById(id) {
-        return User.findById(id, "-password");
+        return await User.findById(id, "-password");
     }
 }

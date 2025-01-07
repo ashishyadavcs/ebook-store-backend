@@ -3,6 +3,7 @@ import { Userservice } from "../services/user.js";
 import createHttpError from "http-errors";
 import { CredentialService } from "../services/credential.js";
 import { TokenService } from "../services/token.js";
+import { createTokenCookies } from "../utils/createcookie.js";
 
 const credentialService = new CredentialService();
 const tokenService = new TokenService();
@@ -58,15 +59,16 @@ class AuthController {
             });
 
             //save refresh token to verify when refreshing token
-            const saveRefreshToken = await tokenService.saveRefreshToken({
+            const savedRefreshToken = await tokenService.saveRefreshToken({
                 token: tokens.refreshtoken,
                 userId: user._id,
                 expiresAt: new Date(),
             });
-            if (!saveRefreshToken) {
+            if (!savedRefreshToken) {
                 const error = new createHttpError(500, "failed to save refreshtoken");
                 throw error;
             }
+            await createTokenCookies(req, res, next, tokens);
 
             res.status(200).json({
                 ...tokens,
@@ -89,8 +91,8 @@ class AuthController {
         }
     }
     async refresh(req, res, next) {
-        const userid = req.user.id;
         const { token } = req.body;
+        console.log("refreshtoken", token);
         try {
             const isverified = await tokenService.verifyRefreshToken(token);
             if (!isverified) {
@@ -98,9 +100,11 @@ class AuthController {
                 throw error;
             }
             const tokens = await tokenService.createTokens({
-                id: userid,
-                roles: user.roles,
+                id: isverified.id,
+                roles: isverified.roles,
             });
+            await createTokenCookies(req, res, next, tokens);
+
             res.json({
                 ...tokens,
                 success: true,
@@ -109,6 +113,15 @@ class AuthController {
             next(err);
         }
     }
-    async googleLogin(req, res, next) {}
+    async googleLogin(req, res, next) {
+        // user appended  by pasport middlere using cb callback; check passport config file
+        const { _id } = req.user;
+        const tokens = await tokenService.createTokens({
+            id: _id,
+        });
+        await createTokenCookies(req, res, next, tokens);
+        // res.json({ ...tokens, success: true });
+        res.redirect("http://localhost:3000/admin");
+    }
 }
 export default AuthController;
