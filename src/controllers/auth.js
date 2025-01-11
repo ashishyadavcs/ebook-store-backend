@@ -69,10 +69,10 @@ class AuthController {
                 throw error;
             }
             await createTokenCookies(req, res, next, tokens);
-
+            const { password: mys, ...removedPass } = user;
             res.status(200).json({
                 ...tokens,
-                user,
+                user: { ...removedPass },
                 success: true,
             });
         } catch (err) {
@@ -91,8 +91,9 @@ class AuthController {
         }
     }
     async refresh(req, res, next) {
+        console.log("refresh token");
         const { token } = req.body;
-        console.log("refreshtoken", token);
+        console.log(token);
         try {
             const isverified = await tokenService.verifyRefreshToken(token);
             if (!isverified) {

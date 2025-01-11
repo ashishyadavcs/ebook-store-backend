@@ -6,6 +6,7 @@ const config = {
     TOKEN_SECRET: process.env.TOKEN_SECRET,
     REFRESS_TOKEN_SECRET: process.env.REFRESS_TOKEN_SECRET,
     GOOGLE_CLIENT_ID:process.env.GOOGLE_CLIENT_ID,
-    GOOGLE_CLIENT_SECRET:process.env.GOOGLE_CLIENT_SECRET
+    GOOGLE_CLIENT_SECRET:process.env.GOOGLE_CLIENT_SECRET,
+    APP_URL:process.env.APP_URL
 };
 export default config;
