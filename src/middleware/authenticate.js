@@ -1,8 +1,8 @@
 import { TokenService } from "../services/token.js";
 const tokenService = new TokenService();
 export const authenticate = async (req, res, next) => {
-    console.log(req.headers.authorization)
     try {
+        console.log("req headers", req.headers.Authorization);
         const authheader = req.headers.authorization;
         const token = authheader.split(" ")[1] || req.cookies["accesstoken"];
         const isVerified = await tokenService.verifyAccessToken(token);

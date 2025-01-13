@@ -15,9 +15,9 @@ export class EbookService {
     }
     async getEbooks() {
         try {
-            return await new Ebook.find();
+            return await Ebook.find();
         } catch (err) {
-            const error = new createHttpError(500, "failed to save ebook");
+            const error = new createHttpError(500, "failed fetch ebooks");
             throw error;
         }
     }

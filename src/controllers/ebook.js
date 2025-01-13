@@ -3,9 +3,10 @@ const ebookService = new EbookService();
 export class EbookController {
     async saveEbook(req, res, next) {
         try {
-            const ebook = await ebookService.create(req.body);
+            const data = req.body;
+            const ebook = await ebookService.create(data);
             if (!ebook) {
-                const error = new createHttpError(500, "no user found");
+                const error = new createHttpError(500, "failed to save ebook");
                 throw error;
             }
             res.status(200).json({
