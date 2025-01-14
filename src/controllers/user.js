@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { EbookService } from "../services/ebook.js";
 import { Userservice } from "../services/user.js";
 
@@ -8,7 +9,7 @@ export class UserController {
         try {
             const id = req.user.id;
             const user = await userService.findById(id);
-            const ebooks = await ebookService.getEbooks({ user: id });
+            const ebooks = await ebookService.getEbooks(null, { uploadedBy: id });
             return res.status(200).json({
                 sucess: true,
                 data: {
@@ -16,6 +17,24 @@ export class UserController {
                     ebooks,
                 },
             });
+        } catch (err) {
+            next(err);
+        }
+    }
+    async update(req, res, next) {
+        try {
+            console.log(req);
+            const id = req.user.id;
+            const data = { ...req.body };
+            if (req.files) {
+                const image = req.files.find(p => (p.fieldname = "image")).path;
+                data.image = image;
+            }
+           await userService.update(id, data);
+           return res.status(200).json({
+            success: true,
+            message:"profile updated"
+        });
         } catch (err) {
             next(err);
         }

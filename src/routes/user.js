@@ -1,5 +1,16 @@
 import { Router } from "express";
-const router=Router()
-router.get("/user/:id",(req,res,next)=>{
-    
-})
+import { UserController } from "../controllers/user.js";
+import {authenticate} from "../middleware/authenticate.js";
+import upload from "../middleware/upload.js";
+const router = Router();
+
+const userController = new UserController();
+
+router.get("/user",authenticate, (req, res, next) => {
+    userController.getUserWithEbooks(req, res, next);
+});
+router.patch("/user",authenticate,upload.any(), (req, res, next) => {
+    userController.update(req, res, next);
+});
+
+export default router

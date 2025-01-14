@@ -27,4 +27,7 @@ export class Userservice {
     async findById(id) {
         return await User.findById(id, "-password");
     }
+    async update(id,data) {
+        return await User.findByIdAndUpdate(id, data);
+    }
 }

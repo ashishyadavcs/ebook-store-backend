@@ -5,7 +5,8 @@ import config from "./index.js";
 
 import authRouter from "../routes/auth.js";
 import ebookRoute from "../routes/ebook.js";
-import reviewRouter from "../routes/review.js";
+import reviewRoute from "../routes/review.js";
+import userRoute from "../routes/user.js"
 import { errorhandler } from "../middleware/errorHandler.js";
 
 const app = express();
@@ -28,7 +29,8 @@ app.use(
 //routes
 app.use(authRouter);
 app.use(ebookRoute);
-app.use(reviewRouter);
+app.use(reviewRoute);
+app.use(userRoute);
 app.use((err, req, res, next) => {
     errorhandler(err, req, res, next);
 });
