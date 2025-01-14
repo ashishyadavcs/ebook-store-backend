@@ -12,7 +12,9 @@ router.get("/ebooks", (req, res, next) => {
 router.post("/ebook", authenticate, upload.any(), (req, res, next) => {
     ebookController.saveEbook(req, res, next);
 });
-router.get("/ebooks/:id", (req, res, next) => {});
+router.get("/ebooks/:id", (req, res, next) => {
+    ebookController.getEbook(req,res,next)
+});
 router.patch("/ebooks/:id", (req, res, next) => {});
 router.delete("/ebooks/:id", (req, res, next) => {});
 export default router;

@@ -13,7 +13,7 @@ export class EbookService {
             throw error;
         }
     }
-    async getEbooks() {
+    async getEbooks(filter, option) {
         try {
             return await Ebook.find();
         } catch (err) {
