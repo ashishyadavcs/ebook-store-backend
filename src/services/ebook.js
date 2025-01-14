@@ -13,23 +13,30 @@ export class EbookService {
             throw error;
         }
     }
-    async getEbooks(filter, option) {
+    async getEbooks(id, filter) {
         try {
-            return await Ebook.find();
+            if (id) {
+                return await Ebook.findById(id);
+            }
+            return await Ebook.find(filter);
         } catch (err) {
-            const error = new createHttpError(500, "failed fetch ebooks");
+            const error = new createHttpError(500, err.message);
             throw error;
         }
     }
-    async updateEbook(data) {
+    async updateEbook(id, data) {
         try {
-            const { id, ...updateFields } = data;
-            const ebook = new Ebook({
-                ...updateFields,
-            });
-            return await ebook.findByIdAndUpdate(id, updateFields);
+            return await Ebook.findByIdAndUpdate(id, data);
         } catch (err) {
-            const error = new createHttpError(500, "failed to update ebook");
+            const error = new createHttpError(500, err.message);
+            throw error;
+        }
+    }
+    async deleteEbook(id) {
+        try {
+            return await Ebook.findByIdAndDelete(id);
+        } catch (err) {
+            const error = new createHttpError(500, err.message);
             throw error;
         }
     }

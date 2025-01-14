@@ -1,6 +1,6 @@
 export const errorhandler = (err, req, res, next) => {
     if (err instanceof Error) {
-        res.status(500).json({
+        res.status(err.status || 500).json({
             success: false,
             errors: [
                 {
@@ -9,6 +9,5 @@ export const errorhandler = (err, req, res, next) => {
                 },
             ],
         });
-        next(err);
     }
 };

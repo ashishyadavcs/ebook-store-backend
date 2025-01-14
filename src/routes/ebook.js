@@ -13,8 +13,12 @@ router.post("/ebook", authenticate, upload.any(), (req, res, next) => {
     ebookController.saveEbook(req, res, next);
 });
 router.get("/ebooks/:id", (req, res, next) => {
-    ebookController.getEbook(req,res,next)
+    ebookController.getEbooks(req, res, next);
 });
-router.patch("/ebooks/:id", (req, res, next) => {});
-router.delete("/ebooks/:id", (req, res, next) => {});
+router.patch("/ebook/:id", authenticate, (req, res, next) => {
+    ebookController.updateEbook(req,res,next)
+});
+router.delete("/ebooks/:id", authenticate, (req, res, next) => {
+    ebookController.deleteEbook(req, res, next);
+});
 export default router;

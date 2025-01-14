@@ -35,6 +35,7 @@ const ebookSchema = Schema({
     uploadedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
+        required:true
     },
 
     createdAt: {
