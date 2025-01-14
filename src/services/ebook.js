@@ -1,5 +1,6 @@
 import createHttpError from "http-errors";
 import Ebook from "../models/ebook.js";
+import { DBFilter } from "../utils/dbFilter.js";
 
 export class EbookService {
     async create(data) {
@@ -13,12 +14,32 @@ export class EbookService {
             throw error;
         }
     }
-    async getEbooks(id, filter) {
+    async getEbooks(id, query) {
         try {
             if (id) {
                 return await Ebook.findById(id);
             }
-            return await Ebook.find(filter);
+            //pagination start
+            const { page, limit } = query;
+
+            if (page && limit) {
+                const skip = (page - 1) * limit;
+                const filter = DBFilter(query);
+                const totalEbooks = await Ebook.countDocuments(filter);
+                const ebooks = await Ebook.find()
+                    .skip(skip)
+                    .limit(Number(limit))
+                    .sort({ createdAt: -1 });
+                return {
+                    ebooks,
+                    pagination: {
+                        totalpage: Math.ceil(totalEbooks / limit),
+                        currentpage: page,
+                    },
+                };
+            }
+            //pagination end
+            return await Ebook.find(query);
         } catch (err) {
             const error = new createHttpError(500, err.message);
             throw error;

@@ -1,4 +1,4 @@
-import mongoose, {  Schema, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 const reviewSchema = Schema({
     user: {
         type: Types.ObjectId,

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import {Schema} from "mongoose";
+import { Schema } from "mongoose";
 const ebookSchema = Schema({
     title: {
         type: String,
@@ -27,15 +27,14 @@ const ebookSchema = Schema({
     },
     reviews: [
         {
-            user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-            comment: { type: String, trim: true },
-            rating: { type: Number, min: 0, max: 5 },
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Review",
         },
     ],
     uploadedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user",
-        required:true
+        required: true,
     },
 
     createdAt: {
