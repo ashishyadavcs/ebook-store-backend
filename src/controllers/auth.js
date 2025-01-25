@@ -4,6 +4,7 @@ import createHttpError from "http-errors";
 import { CredentialService } from "../services/credential.js";
 import { TokenService } from "../services/token.js";
 import { createTokenCookies } from "../utils/createcookie.js";
+import config from "../config/index.js";
 
 const credentialService = new CredentialService();
 const tokenService = new TokenService();
@@ -138,7 +139,7 @@ class AuthController {
         });
         await createTokenCookies(req, res, next, tokens);
         // res.json({ ...tokens, success: true });
-        res.redirect("http://localhost:3000/admin");
+        res.redirect(`${config.APP_URL}/dashboard`);
     }
 }
 export default AuthController;
