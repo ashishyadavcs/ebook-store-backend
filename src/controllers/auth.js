@@ -69,10 +69,10 @@ class AuthController {
                 throw error;
             }
             await createTokenCookies(req, res, next, tokens);
-            const { password: mys, ...removedPass } = user;
+            const { password: pass, ...userdata } = user._doc; //remove password
             res.status(200).json({
                 ...tokens,
-                user: { ...removedPass },
+                user: userdata,
                 success: true,
             });
         } catch (err) {

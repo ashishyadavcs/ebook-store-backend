@@ -16,7 +16,7 @@ router.get("/ebooks/:id", (req, res, next) => {
     ebookController.getEbooks(req, res, next);
 });
 router.patch("/ebook/:id", authenticate, (req, res, next) => {
-    ebookController.updateEbook(req,res,next)
+    ebookController.updateEbook(req, res, next);
 });
 router.delete("/ebooks/:id", authenticate, (req, res, next) => {
     ebookController.deleteEbook(req, res, next);
