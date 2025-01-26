@@ -83,26 +83,28 @@ class AuthController {
     async logout(req, res, next) {
         try {
             const token = req.body.token;
-            //id is attched via athenticate middleware
             const isverified = await tokenService.verifyRefreshToken(token);
-            console.log(isverified);
-            // await tokenService.deleteRefreshToken(req.user.id);
-            res.cookie("accesstoken", "", {
-                maxAge: 0, // Expiring the cookie immediately
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "Strict",
-            });
+            if (isverified) {
+                res.cookie("accesstoken", "", {
+                    maxAge: 0, // Expiring the cookie immediately
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "Strict",
+                });
 
-            res.cookie("refreshtoken", "", {
-                maxAge: 0,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === "production",
-                sameSite: "Strict",
-            });
-            res.json({
-                success: true,
-            });
+                res.cookie("refreshtoken", "", {
+                    maxAge: 0,
+                    httpOnly: true,
+                    secure: process.env.NODE_ENV === "production",
+                    sameSite: "Strict",
+                });
+                res.json({
+                    success: true,
+                });
+            } else {
+                const error = new createHttpError(500, "not authenticated");
+                throw error;
+            }
         } catch (err) {
             next(err);
         }

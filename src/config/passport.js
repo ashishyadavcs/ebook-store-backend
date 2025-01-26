@@ -8,7 +8,7 @@ passport.use(
         {
             clientID: config.GOOGLE_CLIENT_ID,
             clientSecret: config.GOOGLE_CLIENT_SECRET,
-            callbackURL: "/auth/callback/google",
+            callbackURL: config.GOOGLE_REDIRECT_URL,
         },
         async function (accessToken, refreshToken, profile, cb) {
             const { name, email } = profile._json;

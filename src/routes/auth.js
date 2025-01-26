@@ -40,10 +40,5 @@ router.get(
     }
 );
 
-router.post("/upload", upload.any(), async (req, res, next) => {
-    res.json({
-        file: req.files,
-    });
-});
 
 export default router;

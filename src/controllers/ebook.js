@@ -10,7 +10,6 @@ export class EbookController {
                 data.coverImageUrl = coverImageUrl;
             }
             const ebook = await ebookService.create(data);
-            console.log(ebook)
             if (!ebook) {
                 const error = new createHttpError(500, "failed to save ebook");
                 throw error;
