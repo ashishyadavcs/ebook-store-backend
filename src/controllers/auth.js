@@ -20,7 +20,7 @@ class AuthController {
         }
         try {
             const user = await userService.create(req.body);
-            res.json({
+            res.status(200).json({
                 success: true,
                 user,
             });

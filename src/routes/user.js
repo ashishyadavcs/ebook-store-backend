@@ -9,7 +9,7 @@ const userController = new UserController();
 router.get("/user", authenticate, (req, res, next) => {
     userController.getUserWithEbooks(req, res, next);
 });
-router.patch("/user", authenticate, (req, res, next) => {
+router.patch("/user", authenticate, upload.any(), (req, res, next) => {
     userController.update(req, res, next);
 });
 

@@ -11,7 +11,7 @@ export class UserController {
             const user = await userService.findById(id);
             const ebooks = await ebookService.getEbooks(null, { uploadedBy: id });
             return res.status(200).json({
-                sucess: true,
+                success: true,
                 data: {
                     user,
                     ebooks,
@@ -30,11 +30,12 @@ export class UserController {
                 const image = req.files.find(p => (p.fieldname = "image")).path;
                 data.image = image;
             }
-           await userService.update(id, data);
-           return res.status(200).json({
-            success: true,
-            message:"profile updated"
-        });
+            const user = await userService.update(id, data);
+            console.log({ user });
+            return res.status(200).json({
+                success: true,
+                message: "profile updated",
+            });
         } catch (err) {
             next(err);
         }

@@ -10,6 +10,9 @@ const userschema = new mongoose.Schema({
         type: String,
         unique: true,
     },
+    mobile: {
+        type: String,
+    },
     password: {
         type: String,
     },
