@@ -110,9 +110,7 @@ class AuthController {
         }
     }
     async refresh(req, res, next) {
-        console.log("refresh token");
         const { token } = req.body;
-        console.log(token);
         try {
             const isverified = await tokenService.verifyRefreshToken(token);
             if (!isverified) {

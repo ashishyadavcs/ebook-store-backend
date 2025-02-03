@@ -6,8 +6,8 @@ import config from "./index.js";
 import authRouter from "../routes/auth.js";
 import ebookRoute from "../routes/ebook.js";
 import reviewRoute from "../routes/review.js";
-import userRoute from "../routes/user.js"
-import paymentRoute from "../routes/payment.js"
+import userRoute from "../routes/user.js";
+import paymentRoute from "../routes/payment.js";
 import { errorhandler } from "../middleware/errorHandler.js";
 
 const app = express();
@@ -15,7 +15,7 @@ const app = express();
 app.use(
     cors({
         origin: config.APP_URL,
-        methods: ["GET", "POST", "PUT", "DELETE"],
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
         credentials: true,
     })
 );
