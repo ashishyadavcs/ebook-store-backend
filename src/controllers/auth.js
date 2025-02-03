@@ -5,6 +5,7 @@ import { CredentialService } from "../services/credential.js";
 import { TokenService } from "../services/token.js";
 import { createTokenCookies } from "../utils/createcookie.js";
 import config from "../config/index.js";
+import { verifyClientToken } from "../config/google-login.js";
 
 const credentialService = new CredentialService();
 const tokenService = new TokenService();
@@ -132,14 +133,31 @@ class AuthController {
         }
     }
     async googleLogin(req, res, next) {
-        // user appended  by pasport middlere using cb callback; check passport config file
-        const { _id } = req.user;
-        const tokens = await tokenService.createTokens({
-            id: _id,
-        });
-        await createTokenCookies(req, res, next, tokens);
-        // res.json({ ...tokens, success: true });
-        res.redirect(`${config.APP_URL}/dashboard`);
+        const createresponse = async user => {
+            const { _id } = user;
+            const tokens = await tokenService.createTokens({
+                id: _id,
+            });
+            await createTokenCookies(req, res, next, tokens);
+            return res.json({
+                ...tokens,
+                success: true,
+            });
+        };
+
+        const payload = await verifyClientToken(req.body.token);
+        const { name, email, picture: image } = payload;
+        const user = await userService.findByEmail(email);
+        if (!user) {
+            const newuser = await userService.create({
+                email,
+                password: "jshdfj_wjkhef_892734_",
+                name,
+                image,
+            });
+            await createresponse(newuser);
+        }
+        await createresponse(user);
     }
 }
 export default AuthController;

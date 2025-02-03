@@ -5,6 +5,8 @@ import { loginValidator } from "../validators/login.js";
 import { authenticate } from "../middleware/authenticate.js";
 import passport from "../config/passport.js";
 import upload from "../middleware/upload.js";
+import config from "../config/index.js";
+import { verifyClientToken } from "../config/google-login.js";
 
 const authController = new AuthController();
 const router = Router();
@@ -24,21 +26,8 @@ router.post("/refreshtoken", (req, res, next) => {
     authController.refresh(req, res, next);
 });
 
-router.get(
-    "/auth/google",
-    passport.authenticate("google", { scope: ["email", "profile"], session: false })
-);
-router.get(
-    "/auth/callback/google",
-    passport.authenticate("google", {
-        failureRedirect: "/login",
-        scope: ["email", "profile"],
-        session: false,
-    }),
-    (req, res, next) => {
-        authController.googleLogin(req, res, next);
-    }
-);
-
+router.post("/google", async (req, res, next) => {
+    authController.googleLogin(req, res, next);
+});
 
 export default router;
