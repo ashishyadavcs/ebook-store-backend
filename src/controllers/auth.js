@@ -20,7 +20,12 @@ class AuthController {
             });
         }
         try {
-            const user = await userService.create(req.body);
+            const data = { ...req.body };
+            if (req.files) {
+                const image = req.files.find(p => (p.fieldname = "image")).path;
+                data.image = image;
+            }
+            const user = await userService.create(data);
             res.status(200).json({
                 success: true,
                 user,

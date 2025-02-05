@@ -23,7 +23,6 @@ export class UserController {
     }
     async update(req, res, next) {
         try {
-            console.log(req);
             const id = req.user.id;
             const data = { ...req.body };
             if (req.files) {
@@ -31,10 +30,9 @@ export class UserController {
                 data.image = image;
             }
             const user = await userService.update(id, data);
-            console.log({ user });
             return res.status(200).json({
                 success: true,
-                message: "profile updated",
+                user,
             });
         } catch (err) {
             next(err);
