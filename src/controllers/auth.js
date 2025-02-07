@@ -145,7 +145,7 @@ class AuthController {
             });
             await createTokenCookies(req, res, next, tokens);
             return res.json({
-                ...tokens,
+                user,
                 success: true,
             });
         };
