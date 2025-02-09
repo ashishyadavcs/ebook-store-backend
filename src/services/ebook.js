@@ -1,6 +1,8 @@
 import createHttpError from "http-errors";
 import Ebook from "../models/ebook.js";
 import { DBFilter } from "../utils/dbFilter.js";
+import { ebookreviews } from "../utils/aggregation/ebookreviews.js";
+import mongoose from "mongoose";
 
 export class EbookService {
     async create(data) {
@@ -17,7 +19,12 @@ export class EbookService {
     async getEbooks(id, query) {
         try {
             if (id) {
-                return await Ebook.findById(id);
+                return await Ebook.aggregate([
+                    ...ebookreviews,
+                    {
+                        $match: { _id: new mongoose.Types.ObjectId(id) }, // ✅ Filter by ID
+                    },
+                ]);
             }
             //pagination start
             const { page, limit } = query;
@@ -26,10 +33,13 @@ export class EbookService {
                 const skip = (page - 1) * limit;
                 const filter = DBFilter(query);
                 const totalEbooks = await Ebook.countDocuments(filter);
-                const ebooks = await Ebook.find()
-                    .skip(skip)
-                    .limit(Number(limit))
-                    .sort({ createdAt: -1 });
+                const ebooks = await Ebook.aggregate([
+                    ...ebookreviews,
+                    { $match: filter },
+                    { $sort: { createdAt: -1 } },
+                    { $skip: skip },
+                    { $limit: Number(limit) },
+                ]);
                 return {
                     ebooks,
                     pagination: {
@@ -39,7 +49,7 @@ export class EbookService {
                 };
             }
             //pagination end
-            return await Ebook.find(query);
+            return await Ebook.aggregate(ebookreviews);
         } catch (err) {
             const error = new createHttpError(500, err.message);
             throw error;

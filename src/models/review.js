@@ -7,6 +7,7 @@ const reviewSchema = Schema({
     ebook: {
         type: Types.ObjectId,
         required: true,
+        index: true,
     },
     review: {
         type: String,
