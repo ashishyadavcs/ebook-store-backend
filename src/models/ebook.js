@@ -15,8 +15,8 @@ const ebookSchema = Schema({
         type: String,
         trim: true,
     },
-    published:{
-        type:Boolean
+    published: {
+        type: Boolean,
     },
     language: {
         type: String,

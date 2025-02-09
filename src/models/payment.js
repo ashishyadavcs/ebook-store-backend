@@ -4,12 +4,13 @@ const paymentSchema = mongoose.Schema({
         type: Types.ObjectId,
         required: true,
     },
-    ebook: {
-        type: Types.ObjectId,
+    orderId: {
+        type: String,
         required: true,
     },
+    ebooks: [{ type: Types.ObjectId, ref: "Ebook", required: true }],
     paymentId: {
-        type: Types.ObjectId,
+        type: String,
         required: true,
     },
     amount: {
@@ -20,6 +21,8 @@ const paymentSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    paymentMethod: { type: String },
+    paymentGateway: { type: String, default: "razorpay" },
     status: {
         type: String,
         required: true,
@@ -27,13 +30,7 @@ const paymentSchema = mongoose.Schema({
         default: "pending",
     },
     createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
 });
 
-paymentSchema.pre("save", function (next) {
-    this.updatedAt = Date.now();
-    next();
-});
-
-const Payment = mongoose.model("Payment", paymentSchema);
+const Payment = new mongoose.model("Payment", paymentSchema);
 export default Payment;

@@ -16,12 +16,6 @@ const userschema = new mongoose.Schema({
     password: {
         type: String,
     },
-    ebooks: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Ebook",
-        },
-    ],
     createdAt: {
         type: Date,
         default: Date.now,

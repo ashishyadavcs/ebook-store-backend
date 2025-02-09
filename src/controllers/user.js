@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import Payment from "../models/payment.js";
 import { EbookService } from "../services/ebook.js";
 import { Userservice } from "../services/user.js";
 
@@ -9,7 +9,8 @@ export class UserController {
         try {
             const id = req.user.id;
             const user = await userService.findById(id);
-            const ebooks = await ebookService.getEbooks(null, { uploadedBy: id });
+            const paidEbooks = await Payment.find({ user: id }).populate("ebooks").exec();
+            const ebooks = paidEbooks.flatMap(payment => payment.ebooks);
             return res.status(200).json({
                 success: true,
                 data: {
@@ -18,9 +19,11 @@ export class UserController {
                 },
             });
         } catch (err) {
+            console.log(err);
             next(err);
         }
     }
+
     async update(req, res, next) {
         try {
             const id = req.user.id;

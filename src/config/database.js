@@ -11,3 +11,13 @@ export const connectDB = async () => {
             process.exit(1);
         });
 };
+
+//key migration
+// Payment.updateMany(
+//     {}, // empty filter to apply to all documents
+//     { $rename: { "ebookIds": "ebooks" } } // Rename the field
+// ).then((result) => {
+//     console.log("Updated documents: ", result);
+// }).catch((error) => {
+//     console.error("Error updating documents: ", error);
+// });
