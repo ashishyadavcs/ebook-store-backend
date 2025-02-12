@@ -8,6 +8,9 @@ export class EbookController {
             if (req.files) {
                 const coverImageUrl = req.files.find(p => (p.fieldname = "coverImage")).path; //get image url from cloudainary image object
                 data.coverImageUrl = coverImageUrl;
+
+                const fileUrl = req.files.find(p => (p.fieldname = "fileUrl")).path; //get image url from cloudainary image object
+                data.fileUrl = fileUrl;
             }
             const ebook = await ebookService.create(data);
             if (!ebook) {

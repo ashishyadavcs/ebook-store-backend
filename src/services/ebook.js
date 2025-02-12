@@ -1,7 +1,7 @@
 import createHttpError from "http-errors";
 import Ebook from "../models/ebook.js";
 import { DBFilter } from "../utils/dbFilter.js";
-import { ebookreviews } from "../utils/aggregation/ebookreviews.js";
+import { ebookreviews, ebookReviewsWithUser } from "../utils/aggregation/ebookreviews.js";
 import mongoose from "mongoose";
 
 export class EbookService {
@@ -20,7 +20,7 @@ export class EbookService {
         try {
             if (id) {
                 return await Ebook.aggregate([
-                    ...ebookreviews,
+                    ...ebookReviewsWithUser,
                     {
                         $match: { _id: new mongoose.Types.ObjectId(id) }, // ✅ Filter by ID
                     },

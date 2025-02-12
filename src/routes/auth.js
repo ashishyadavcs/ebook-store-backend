@@ -2,11 +2,6 @@ import { Router } from "express";
 import AuthController from "../controllers/auth.js";
 import { registerValidator } from "../validators/register.js";
 import { loginValidator } from "../validators/login.js";
-import { authenticate } from "../middleware/authenticate.js";
-import passport from "../config/passport.js";
-import upload from "../middleware/upload.js";
-import config from "../config/index.js";
-import { verifyClientToken } from "../config/google-login.js";
 
 const authController = new AuthController();
 const router = Router();
