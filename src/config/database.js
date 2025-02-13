@@ -10,6 +10,12 @@ export const connectDB = async () => {
             console.log("Could not connect", err);
             process.exit(1);
         });
+
+    mongoose.plugin(schema => {
+        schema.pre(/^find/, function () {
+            this.lean();
+        });
+    });
 };
 
 //key migration
