@@ -9,9 +9,12 @@ import reviewRoute from "../routes/review.js";
 import userRoute from "../routes/user.js";
 import paymentRoute from "../routes/payment.js";
 import { errorhandler } from "../middleware/errorHandler.js";
-
+import { limiter, securityHeaders } from "./security.js";
 const app = express();
+
 //middlewares
+app.use(securityHeaders());
+app.use(limiter);
 app.use(
     cors({
         origin: config.APP_URL,
@@ -37,5 +40,4 @@ app.use(paymentRoute);
 app.use((err, req, res, next) => {
     errorhandler(err, req, res, next);
 });
-
 export default app;
