@@ -14,7 +14,7 @@ import logger from "./logger.js";
 const app = express();
 
 //middlewares
-app.use(securityHeaders);
+// app.use(securityHeaders);
 app.use(limiter);
 app.use((req, res, next) => {
     logger.info(req.method, req.url, req.ip);
