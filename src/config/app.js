@@ -14,11 +14,15 @@ import logger from "./logger.js";
 const app = express();
 
 //middlewares
-// app.use(securityHeaders);
+app.use(securityHeaders);
 app.use(limiter);
 app.use((req, res, next) => {
-    logger.info(req.method, req.url, req.ip);
-    next();
+    try {
+        logger.info(req.method, req.url, req.ip);
+        next();
+    } catch (err) {
+        next(err);
+    }
 });
 app.use(
     cors({
