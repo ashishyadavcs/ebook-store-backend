@@ -23,6 +23,13 @@ export class UserController {
             next(err);
         }
     }
+    async getUsers(req, res, next) {
+        const users = await userService.getUsers();
+        res.status(200).json({
+            success: true,
+            data: users,
+        });
+    }
 
     async update(req, res, next) {
         try {

@@ -62,7 +62,7 @@ class AuthController {
             //create token
             const tokens = await tokenService.createTokens({
                 id: user._id,
-                roles: user.roles,
+                roles: user.role,
             });
 
             //save refresh token to verify when refreshing token

@@ -27,7 +27,17 @@ router.post("/create-order", authenticate, async (req, res, next) => {
         next(err);
     }
 });
-
+router.get("/payments", authenticate, async (req, res, next) => {
+    try {
+        const payments = await Payment.find();
+        res.status(200).json({
+            data: payments,
+            success: true,
+        });
+    } catch (err) {
+        next(err);
+    }
+});
 router.post("/verify-payment", authenticate, async (req, res, next) => {
     const { orderid, paymentid, signature, ebooks, amount } = req.body;
     const body = orderid + "|" + paymentid;
