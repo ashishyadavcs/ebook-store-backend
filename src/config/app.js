@@ -10,7 +10,7 @@ import userRoute from "../routes/user.js";
 import paymentRoute from "../routes/payment.js";
 import { errorhandler } from "../middleware/errorHandler.js";
 import { limiter, securityHeaders } from "./security.js";
-import logger from "./logger.js";
+// import logger from "./logger.js";
 const app = express();
 
 //middlewares
