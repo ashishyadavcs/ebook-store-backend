@@ -16,14 +16,14 @@ const app = express();
 //middlewares
 app.use(securityHeaders);
 app.use(limiter);
-app.use((req, res, next) => {
-    try {
-        logger.info(req.method, req.url, req.ip);
-        next();
-    } catch (err) {
-        next(err);
-    }
-});
+// app.use((req, res, next) => { //not working on vercel
+//     try {
+//         logger.info(req.method, req.url, req.ip);
+//         next();
+//     } catch (err) {
+//         next(err);
+//     }
+// });
 app.use(
     cors({
         origin: config.APP_URL,
