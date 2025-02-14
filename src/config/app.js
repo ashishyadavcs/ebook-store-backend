@@ -16,7 +16,8 @@ const app = express();
 //middlewares
 app.use(securityHeaders);
 app.use(limiter);
-// app.use((req, res, next) => { //not working on vercel
+// app.use((req, res, next) => {
+//     //not working on vercel
 //     try {
 //         logger.info(req.method, req.url, req.ip);
 //         next();
