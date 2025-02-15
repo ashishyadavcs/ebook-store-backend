@@ -75,7 +75,7 @@ class AuthController {
                 const error = new createHttpError(500, "failed to save refreshtoken");
                 throw error;
             }
-            await createTokenCookies(req, res, next, tokens);
+            await createTokenCookies(req, res, next, tokens, user);
             const { password: pass, ...userdata } = user._doc; //remove password
             res.status(200).json({
                 ...tokens,
@@ -143,7 +143,7 @@ class AuthController {
             const tokens = await tokenService.createTokens({
                 id: _id,
             });
-            await createTokenCookies(req, res, next, tokens);
+            await createTokenCookies(req, res, next, tokens, user);
             return res.json({
                 user,
                 success: true,
