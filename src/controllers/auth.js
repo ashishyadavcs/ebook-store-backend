@@ -62,14 +62,15 @@ class AuthController {
             //create token
             const tokens = await tokenService.createTokens({
                 id: user._id,
-                roles: user.role,
+                role: user.role,
             });
 
             //save refresh token to verify when refreshing token
             const savedRefreshToken = await tokenService.saveRefreshToken({
                 token: tokens.refreshtoken,
                 userId: user._id,
-                expiresAt: new Date(),
+                role: user.role,
+                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
             });
             if (!savedRefreshToken) {
                 const error = new createHttpError(500, "failed to save refreshtoken");
@@ -125,11 +126,11 @@ class AuthController {
             }
             const tokens = await tokenService.createTokens({
                 id: isverified.id,
-                roles: isverified.roles,
+                role: isverified.role,
             });
             await createTokenCookies(req, res, next, tokens, {
                 _id: isverified.id,
-                roles: isverified.roles,
+                role: isverified.role,
             });
 
             res.json({
@@ -137,15 +138,15 @@ class AuthController {
                 success: true,
             });
         } catch (err) {
-            console.log(err);
             next(err);
         }
     }
     async googleLogin(req, res, next) {
         const createresponse = async user => {
-            const { _id } = user;
+            const { _id, role } = user;
             const tokens = await tokenService.createTokens({
                 id: _id,
+                role,
             });
             await createTokenCookies(req, res, next, tokens, user);
             return res.json({

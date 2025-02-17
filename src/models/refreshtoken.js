@@ -11,6 +11,11 @@ const refreshSchema = new Schema({
         ref: "User", // Reference to the User model
         required: true,
     },
+    role: {
+        type: String,
+        enum: ["user", "admin", "author"],
+        default: "user",
+    },
     expiresAt: {
         type: Date,
         required: true,
