@@ -127,13 +127,17 @@ class AuthController {
                 id: isverified.id,
                 roles: isverified.roles,
             });
-            await createTokenCookies(req, res, next, tokens);
+            await createTokenCookies(req, res, next, tokens, {
+                _id: isverified.id,
+                roles: isverified.roles,
+            });
 
             res.json({
                 ...tokens,
                 success: true,
             });
         } catch (err) {
+            console.log(err);
             next(err);
         }
     }

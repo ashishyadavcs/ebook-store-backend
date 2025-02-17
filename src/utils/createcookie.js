@@ -3,7 +3,7 @@ export const createTokenCookies = async (req, res, next, tokens, user) => {
         httpOnly: true,
         secure: true,
         sameSite: "none",
-        expires: new Date(Date.now() + 60 * 60 * 1000), //5 seconds
+        expires: new Date(Date.now() + 10 * 1000), //5 seconds
     });
     res.cookie("refreshtoken", tokens.refreshtoken, {
         httpOnly: true,
