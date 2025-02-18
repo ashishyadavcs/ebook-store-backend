@@ -31,6 +31,6 @@ export class Userservice {
         return await User.find({}, "-password");
     }
     async update(id, data) {
-        return await User.findByIdAndUpdate(id, data);
+        return await User.findByIdAndUpdate(id, data, { new: true });
     }
 }
