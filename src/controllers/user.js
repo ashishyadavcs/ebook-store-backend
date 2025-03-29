@@ -34,7 +34,7 @@ export class UserController {
         try {
             const id = req.user.id;
             const data = { ...req.body };
-            if (req.files) {
+            if (req.files.length > 0) {
                 const image = req.files.find(p => (p.fieldname = "image")).path;
                 data.image = image;
             }

@@ -67,6 +67,7 @@ export class EbookService {
         try {
             return await Ebook.findByIdAndDelete(id);
         } catch (err) {
+            console.log(err);
             const error = new createHttpError(500, err.message);
             throw error;
         }

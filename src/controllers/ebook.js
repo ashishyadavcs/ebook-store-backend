@@ -63,7 +63,8 @@ export class EbookController {
         try {
             const { id } = req.params;
             let ebook;
-            if (req.files) {
+
+            if (req.files.length > 0) {
                 const coverImageUrl = req.files.find(p => (p.fieldname = "coverImage")).path; //get image url from cloudainary image object
                 const data = { ...req.body, coverImageUrl, uploadedBy: req.user.id };
                 await ebookService.updateEbook(id, data);
