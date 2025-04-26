@@ -50,13 +50,13 @@ class AuthController {
             //check existing user
             const user = await userService.findByEmail(email);
             if (!user) {
-                const error = new createHttpError(500, "no user found");
+                const error = new createHttpError(500, "no user exist with this email");
                 throw error;
             }
             // match password
             const matchPassword = await credentialService.comparePassword(user.password, password);
             if (!matchPassword) {
-                const error = new createHttpError(500, "password not matched");
+                const error = new createHttpError(500, "incorrect email or password");
                 throw error;
             }
             //create token
