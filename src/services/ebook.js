@@ -28,10 +28,9 @@ export class EbookService {
             }
             //pagination start
             const { page, limit } = query;
-
+            const filter = DBFilter(query);
             if (page && limit) {
                 const skip = (page - 1) * limit;
-                const filter = DBFilter(query);
                 const totalEbooks = await Ebook.countDocuments(filter);
                 const ebooks = await Ebook.aggregate([
                     ...ebookreviews,
@@ -49,6 +48,11 @@ export class EbookService {
                 };
             }
             //pagination end
+
+            if (Object.keys(query).length > 0) {
+                return await Ebook.aggregate([...ebookreviews, { $match: filter }]);
+            }
+
             return await Ebook.aggregate(ebookreviews);
         } catch (err) {
             const error = new createHttpError(500, err.message);
@@ -67,7 +71,6 @@ export class EbookService {
         try {
             return await Ebook.findByIdAndDelete(id);
         } catch (err) {
-            console.log(err);
             const error = new createHttpError(500, err.message);
             throw error;
         }
