@@ -14,6 +14,7 @@ import { limiter, securityHeaders } from "./security.js";
 const app = express();
 
 //middlewares
+app.set("trust proxy", 1);
 app.use(securityHeaders);
 app.use(limiter);
 // app.use((req, res, next) => {
