@@ -7,7 +7,12 @@ const ebookService = new EbookService();
 export class UserController {
     async getUserWithEbooks(req, res, next) {
         try {
-            const id = req.user.id;
+            let id = "";
+            if (req.params.id) {
+                id = req.params.id;
+            } else {
+                id = req.user.id;
+            }
             const user = await userService.findById(id);
             const paidEbooks = await Payment.find({ user: id }).populate("ebooks").exec();
             const ebooks = paidEbooks.flatMap(payment => payment.ebooks);
@@ -42,6 +47,23 @@ export class UserController {
             return res.status(200).json({
                 success: true,
                 user,
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async deleteUser(req, res, next) {
+        try {
+            const { id } = req.params;
+            const user = await userService.deleteUser(id);
+            if (!user) {
+                const error = new createHttpError(500, "no ebooks found");
+                throw error;
+            }
+            res.status(200).json({
+                message: "deleted successfully",
+                success: true,
             });
         } catch (err) {
             next(err);

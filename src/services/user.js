@@ -30,6 +30,14 @@ export class Userservice {
     async getUsers() {
         return await User.find({}, "-password");
     }
+    async deleteUser(id) {
+        try {
+            return await User.findByIdAndDelete(id);
+        } catch (err) {
+            const error = new createHttpError(500, err.message);
+            throw error;
+        }
+    }
     async update(id, data) {
         return await User.findByIdAndUpdate(id, data, { new: true });
     }
