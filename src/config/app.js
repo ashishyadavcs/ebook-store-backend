@@ -8,6 +8,7 @@ import ebookRoute from "../routes/ebook.js";
 import reviewRoute from "../routes/review.js";
 import userRoute from "../routes/user.js";
 import paymentRoute from "../routes/payment.js";
+import emailRoute from "../routes/email.js";
 import { errorhandler } from "../middleware/errorHandler.js";
 import { limiter, securityHeaders } from "./security.js";
 // import logger from "./logger.js";
@@ -47,6 +48,7 @@ app.use(ebookRoute);
 app.use(reviewRoute);
 app.use(userRoute);
 app.use(paymentRoute);
+app.use(emailRoute);
 //error handler should be last middlware
 app.use((err, req, res, next) => {
     errorhandler(err, req, res, next);
