@@ -14,7 +14,7 @@ const longLived = {
 
 export const createTokenCookies = (req, res, next, tokens, user) => {
     res.cookie("accesstoken", tokens.accesstoken, shortLived);
-    res.cookie("_user", user._id.toString(), shortLived);
-    res.cookie("userrole", user.role, shortLived);
+    res.cookie("_user", user._id.toString(), longLived);
+    res.cookie("userrole", user.role, longLived);
     res.cookie("refreshtoken", tokens.refreshtoken, longLived);
 };

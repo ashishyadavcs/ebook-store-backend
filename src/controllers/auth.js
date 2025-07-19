@@ -3,12 +3,13 @@ import { Userservice } from "../services/user.js";
 import createHttpError from "http-errors";
 import { CredentialService } from "../services/credential.js";
 import { TokenService } from "../services/token.js";
-import { createTokenCookies } from "../utils/createcookie.js";
-import config from "../config/index.js";
 import { verifyClientToken } from "../config/google-login.js";
+import { sessionFlow } from "../utils/session.js";
+import { SessionService } from "../services/session.js";
 
 const credentialService = new CredentialService();
 const tokenService = new TokenService();
+const sessionService = new SessionService();
 const userService = new Userservice();
 class AuthController {
     async register(req, res, next) {
@@ -59,24 +60,7 @@ class AuthController {
                 const error = new createHttpError(500, "incorrect email or password");
                 throw error;
             }
-            //create token
-            const tokens = await tokenService.createTokens({
-                id: user._id,
-                role: user.role,
-            });
-
-            //save refresh token to verify when refreshing token
-            const savedRefreshToken = await tokenService.saveRefreshToken({
-                token: tokens.refreshtoken,
-                userId: user._id,
-                role: user.role,
-                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-            });
-            if (!savedRefreshToken) {
-                const error = new createHttpError(500, "failed to save refreshtoken");
-                throw error;
-            }
-            await createTokenCookies(req, res, next, tokens, user);
+            const { tokens } = await sessionFlow(req, res, next, user);
             const { password: pass, ...userdata } = user._doc; //remove password
             res.status(200).json({
                 ...tokens,
@@ -89,46 +73,42 @@ class AuthController {
     }
     async logout(req, res, next) {
         try {
-            const token = req.body.token;
+            const token = req.body.token || req.cookies["refreshtoken"];
             const isverified = await tokenService.verifyRefreshToken(token);
-            if (isverified) {
-                res.cookie("accesstoken", "", {
-                    maxAge: 0, // Expiring the cookie immediately
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === "production",
-                    sameSite: "Strict",
-                });
-
-                res.cookie("refreshtoken", "", {
-                    maxAge: 0,
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === "production",
-                    sameSite: "Strict",
-                });
-                res.json({
-                    success: true,
-                });
-            } else {
+            if (!isverified) {
                 const error = new createHttpError(500, "not authenticated");
                 throw error;
             }
+
+            const { sessionId } = isverified;
+            await sessionService.deleteSession(sessionId);
+
+            res.clearCookie("accesstoken");
+            res.clearCookie("refreshtoken");
+            res.json({
+                success: true,
+            });
         } catch (err) {
             next(err);
         }
     }
     async refresh(req, res, next) {
-        const { token } = req.body;
+        const { token } = req.body || req.cookies["refreshtoken"];
         try {
             const isverified = await tokenService.verifyRefreshToken(token);
             if (!isverified) {
-                const error = new createHttpError(500, "refresh token expired or invalid");
+                const error = new createHttpError(401, "refresh token expired or invalid");
                 throw error;
             }
-            const tokens = await tokenService.createTokens({
-                id: isverified.id,
-                role: isverified.role,
-            });
-            await createTokenCookies(req, res, next, tokens, {
+            const { sessionId } = isverified;
+            const session = await sessionService.findSession(sessionId);
+            if (!session) {
+                const error = new createHttpError(401, "invalid session");
+                throw error;
+            }
+            await sessionService.deleteSession(sessionId); //delete old session
+            const { tokens } = await sessionFlow(req, res, next, {
+                //create new session
                 _id: isverified.id,
                 role: isverified.role,
             });
@@ -143,12 +123,7 @@ class AuthController {
     }
     async googleLogin(req, res, next) {
         const createresponse = async user => {
-            const { _id, role } = user;
-            const tokens = await tokenService.createTokens({
-                id: _id,
-                role,
-            });
-            await createTokenCookies(req, res, next, tokens, user);
+            await sessionFlow(req, res, next, user);
             return res.json({
                 user,
                 success: true,

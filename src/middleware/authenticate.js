@@ -14,6 +14,7 @@ export const authenticate = async (req, res, next) => {
             const error = new createHttpError(401, "invalid accesstoken header");
             throw error;
         }
+        console.log("user authenticated", isVerified);
         req.user = isVerified;
         next();
     } catch (err) {
