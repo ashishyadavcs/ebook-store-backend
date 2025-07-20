@@ -60,7 +60,7 @@ class AuthController {
                 const error = new createHttpError(500, "incorrect email or password");
                 throw error;
             }
-            const { tokens, sessionId } = await sessionFlow(req, res, next, user);
+            const { tokens } = await sessionFlow(req, res, next, user);
             const { password: pass, ...userdata } = user._doc; //remove password
             res.status(200).json({
                 ...tokens,

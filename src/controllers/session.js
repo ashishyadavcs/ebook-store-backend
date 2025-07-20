@@ -1,58 +1,40 @@
-import RefreshToken from "../models/session.js";
-import { TokenService } from "../services/token.js";
+import { SessionService } from "../services/session.js";
+const sessionService = new SessionService();
 
-const tokenService = new TokenService();
-
-export class UserController {
-    async getDevices(req, res) {
+export class SessionController {
+    async getDevices(req, res, next) {
         try {
-            const userId = req.user.userId;
-            const currentDeviceId = tokenService.generateDeviceId(req);
-
-            const devices = await RefreshToken.find({ userId })
-                .sort({ createdAt: -1 })
-                .select("-token");
-
+            const userId = req.user.id;
+            const currentDeviceId = sessionService.findSessions(userId);
+            const devices = await sessionService.findSessions(userId);
             const devicesWithCurrent = devices.map(device => ({
                 ...device.toObject(),
                 isCurrent: device.deviceId === currentDeviceId,
             }));
-
-            res.json({ devices: devicesWithCurrent });
+            res.json({ success: true, devices: devicesWithCurrent });
         } catch (error) {
-            res.status(500).json({ message: "Failed to fetch devices" });
+            next(error);
         }
     }
 
-    async revokeDevice(req, res) {
+    async revokeDevice(req, res, next) {
         try {
             const { deviceId } = req.params;
-            const userId = req.user.userId;
-
-            await RefreshToken.findOneAndDelete({
-                _id: deviceId,
-                userId: userId,
-            });
-
-            res.json({ message: "Device revoked successfully" });
+            await sessionService.deleteSession(deviceId);
+            res.json({ success: true, message: "Device revoked successfully" });
         } catch (error) {
-            res.status(500).json({ message: "Failed to revoke device" });
+            next(error);
         }
     }
 
-    async revokeAllDevices(req, res) {
+    async revokeAllDevices(req, res, next) {
         try {
             const userId = req.user.userId;
-            const currentDeviceId = tokenService.generateDeviceId(req);
-
-            await RefreshToken.deleteMany({
-                userId: userId,
-                deviceId: { $ne: currentDeviceId },
-            });
-
-            res.json({ message: "All other devices revoked successfully" });
+            const currentDeviceId = req.user.deviceId;
+            await sessionService.deleteAllSessions(userId, currentDeviceId);
+            res.json({ success: true, message: "All other devices revoked successfully" });
         } catch (error) {
-            res.status(500).json({ message: "Failed to revoke devices" });
+            next(error);
         }
     }
 }

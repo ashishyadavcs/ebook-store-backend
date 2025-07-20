@@ -2,6 +2,7 @@ import createHttpError from "http-errors";
 import { TokenService } from "../services/token.js";
 import { createTokenCookies } from "../utils/createcookie.js";
 import { SessionService } from "../services/session.js";
+import { session_expiry } from "../config/constants.js";
 const tokenService = new TokenService();
 const sessionService = new SessionService();
 export const authenticate = async (req, res, next) => {
@@ -31,7 +32,7 @@ export const authenticate = async (req, res, next) => {
                 ip: req.headers["x-forwarded-for"] || req.connection.remoteAddress,
                 deviceId: req.headers["x-device-id"] || "unknown-device",
                 userAgent: req.headers["user-agent"],
-                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+                expiresAt: session_expiry,
             });
             const tokens = await tokenService.createTokens({
                 id: isvalid.id,
@@ -61,6 +62,7 @@ export const authenticate = async (req, res, next) => {
             next();
         }
     } catch (err) {
+        console.error("refreshtoken error:", err);
         next(err);
     }
 };

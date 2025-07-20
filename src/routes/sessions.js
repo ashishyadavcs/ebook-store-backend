@@ -1,12 +1,18 @@
 import express from "express";
-import { UserController } from "../controllers/session.js";
-import auth from "../middleware/auth.js";
+import { SessionController } from "../controllers/session.js";
+import { authenticate } from "../middleware/authenticate.js";
 
 const router = express.Router();
-const userController = new UserController();
+const sessionController = new SessionController();
 
-router.get("/devices", auth, userController.getDevices);
-router.delete("/devices/:deviceId", auth, userController.revokeDevice);
-router.post("/devices/revoke-all", auth, userController.revokeAllDevices);
+router.get("/devices", authenticate, (req, res, next) => {
+    sessionController.getDevices(req, res, next);
+});
+router.delete("/devices/:deviceId", authenticate, (req, res, next) => {
+    sessionController.revokeDevice(req, res, next);
+});
+router.post("/devices/revoke-all", authenticate, (req, res, next) => {
+    sessionController.revokeAllDevices(req, res, next);
+});
 
 export default router;
