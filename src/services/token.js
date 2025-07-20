@@ -1,12 +1,13 @@
 import jwt from "jsonwebtoken";
 import config from "../config/index.js";
+import { accesstoken_time, refreshtoken_time } from "../config/constants.js";
 export class TokenService {
     async createTokens(payload) {
         const accesstoken = jwt.sign(payload, config.TOKEN_SECRET, {
-            expiresIn: "10day",
+            expiresIn: accesstoken_time,
         });
         const refreshtoken = jwt.sign(payload, config.REFRESS_TOKEN_SECRET, {
-            expiresIn: "30day",
+            expiresIn: refreshtoken_time,
         });
         return {
             accesstoken,

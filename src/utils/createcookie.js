@@ -1,15 +1,17 @@
+import { accesstoken_expiry, refreshtoken_expiry } from "../config/constants.js";
+
 const isProd = process.env.NODE_ENV === "production";
 const shortLived = {
     httpOnly: true,
     secure: true,
     sameSite: isProd ? "Strict" : "none",
-    expires: new Date(Date.now() + 10 * 1000), // 10 seconds
+    expires: accesstoken_expiry, // 1 minute
 };
 const longLived = {
     httpOnly: true,
     secure: true,
     sameSite: isProd ? "Strict" : "none",
-    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+    expires: refreshtoken_expiry, // 30 days
 };
 
 export const createTokenCookies = (res, tokens, user, next) => {
