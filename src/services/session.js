@@ -6,14 +6,9 @@ export class SessionService {
     }
 
     async deleteSession(sessionId) {
-        return await Session.findOneAndDelete({
-            _id: sessionId,
-        });
+        return await Session.findByIdAndDelete(sessionId);
     }
-    async findSession(sessionId) {
-        return await Session.findOne({
-            _id: sessionId,
-            isValid: true,
-        });
+    async findSessionById(sessionId) {
+        return await Session.findById(sessionId);
     }
 }

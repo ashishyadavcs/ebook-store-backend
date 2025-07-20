@@ -1,3 +1,4 @@
+import createHttpError from "http-errors";
 import { SessionService } from "../services/session.js";
 import { TokenService } from "../services/token.js";
 import { createTokenCookies } from "./createcookie.js";
@@ -34,7 +35,7 @@ export const sessionFlow = async (req, res, next, user) => {
         sessionId: session._id,
         role: user.role,
     });
-    createTokenCookies(req, res, next, tokens, user);
+    createTokenCookies(res, tokens, user);
     return {
         tokens,
         sessionId: session._id,

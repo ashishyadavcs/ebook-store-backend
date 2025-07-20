@@ -60,7 +60,7 @@ class AuthController {
                 const error = new createHttpError(500, "incorrect email or password");
                 throw error;
             }
-            const { tokens } = await sessionFlow(req, res, next, user);
+            const { tokens, sessionId } = await sessionFlow(req, res, next, user);
             const { password: pass, ...userdata } = user._doc; //remove password
             res.status(200).json({
                 ...tokens,
@@ -73,7 +73,7 @@ class AuthController {
     }
     async logout(req, res, next) {
         try {
-            const token = req.body.token || req.cookies["refreshtoken"];
+            const token = req.cookies["refreshtoken"];
             const isverified = await tokenService.verifyRefreshToken(token);
             if (!isverified) {
                 const error = new createHttpError(500, "not authenticated");
@@ -89,38 +89,11 @@ class AuthController {
                 success: true,
             });
         } catch (err) {
+            console.error("Logout error:", err);
             next(err);
         }
     }
-    async refresh(req, res, next) {
-        const { token } = req.body || req.cookies["refreshtoken"];
-        try {
-            const isverified = await tokenService.verifyRefreshToken(token);
-            if (!isverified) {
-                const error = new createHttpError(401, "refresh token expired or invalid");
-                throw error;
-            }
-            const { sessionId } = isverified;
-            const session = await sessionService.findSession(sessionId);
-            if (!session) {
-                const error = new createHttpError(401, "invalid session");
-                throw error;
-            }
-            await sessionService.deleteSession(sessionId); //delete old session
-            const { tokens } = await sessionFlow(req, res, next, {
-                //create new session
-                _id: isverified.id,
-                role: isverified.role,
-            });
 
-            res.json({
-                ...tokens,
-                success: true,
-            });
-        } catch (err) {
-            next(err);
-        }
-    }
     async googleLogin(req, res, next) {
         const createresponse = async user => {
             await sessionFlow(req, res, next, user);

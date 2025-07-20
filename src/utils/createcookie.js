@@ -3,7 +3,7 @@ const shortLived = {
     httpOnly: true,
     secure: true,
     sameSite: isProd ? "Strict" : "none",
-    expires: new Date(Date.now() + 10 * 60 * 1000), // 10 seconds
+    expires: new Date(Date.now() + 10 * 1000), // 10 seconds
 };
 const longLived = {
     httpOnly: true,
@@ -12,7 +12,7 @@ const longLived = {
     expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
 };
 
-export const createTokenCookies = (res, tokens, user) => {
+export const createTokenCookies = (res, tokens, user, next) => {
     res.cookie("accesstoken", tokens.accesstoken, shortLived);
     res.cookie("_user", user._id.toString(), longLived);
     res.cookie("userrole", user.role, longLived);
