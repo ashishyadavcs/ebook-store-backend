@@ -4,7 +4,7 @@ import createHttpError from "http-errors";
 import { CredentialService } from "../services/credential.js";
 import { TokenService } from "../services/token.js";
 import { verifyClientToken } from "../config/google-login.js";
-import { sessionFlow } from "../utils/session.js";
+import { generateDeviceId, sessionFlow } from "../utils/session.js";
 import { SessionService } from "../services/session.js";
 
 const credentialService = new CredentialService();
@@ -60,7 +60,8 @@ class AuthController {
                 const error = new createHttpError(500, "incorrect email or password");
                 throw error;
             }
-            const { tokens } = await sessionFlow(req, res, next, user);
+            const deviceIdLogin = req.cookies["deviceId"] || generateDeviceId();
+            const { tokens } = await sessionFlow(req, res, next, user, deviceIdLogin);
             const { password: pass, ...userdata } = user._doc; //remove password
             res.status(200).json({
                 ...tokens,
@@ -96,7 +97,8 @@ class AuthController {
 
     async googleLogin(req, res, next) {
         const createresponse = async user => {
-            await sessionFlow(req, res, next, user);
+            const deviceIdLogin = req.cookies["deviceId"] || generateDeviceId();
+            await sessionFlow(req, res, next, user, deviceIdLogin);
             return res.json({
                 user,
                 success: true,

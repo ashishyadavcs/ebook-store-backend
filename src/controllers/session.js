@@ -5,7 +5,7 @@ export class SessionController {
     async getDevices(req, res, next) {
         try {
             const userId = req.user.id;
-            const currentDeviceId = sessionService.findSessions(userId);
+            const currentDeviceId = req.cookies["deviceId"];
             const devices = await sessionService.findSessions(userId);
             const devicesWithCurrent = devices.map(device => ({
                 ...device.toObject(),

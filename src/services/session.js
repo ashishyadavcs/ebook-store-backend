@@ -14,6 +14,12 @@ export class SessionService {
     async findSessionById(sessionId) {
         return await Session.findById(sessionId);
     }
+    async updateSession(sessionId, data) {
+        return await Session.findByIdAndUpdate(sessionId, data, { new: true });
+    }
+    async findSessionByDeviceId(deviceId) {
+        return await Session.findOne({ deviceId });
+    }
     async findSessions(userId) {
         return await Session.find({ userId }).sort({ createdAt: -1 });
     }

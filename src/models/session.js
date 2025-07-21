@@ -36,7 +36,7 @@ const SessionSchema = new Schema({
         default: Date.now,
     },
 });
-SessionSchema.index({ userId: 1, deviceId: 1 }, { unique: true });
+SessionSchema.index({ deviceId: 1 }, { unique: true });
 // Automatically delete expired sessions
 // SessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 const Session = mongoose.model("Session", SessionSchema);
