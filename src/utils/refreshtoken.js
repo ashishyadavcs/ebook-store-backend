@@ -3,6 +3,7 @@ import { SessionService } from "../services/session.js";
 import { TokenService } from "../services/token.js";
 import { createTokenCookies } from "./createcookie.js";
 import { session_expiry } from "../config/constants.js";
+import { clearAuthCookies } from "./clearAuthCookie.js";
 
 export const performTokenRefresh = async (req, res, next) => {
     const tokenService = new TokenService();
@@ -21,14 +22,9 @@ export const performTokenRefresh = async (req, res, next) => {
     }
     let session;
     if (isSessionValid.deviceId !== req.cookies["deviceId"]) {
-        session = await sessionService.createSession({
-            userId: isvalid.id,
-            role: isvalid.role,
-            ip: req.headers["x-forwarded-for"] || req.connection.remoteAddress,
-            deviceId: req.cookies["deviceId"] || "unknown-device",
-            userAgent: req.headers["user-agent"],
-            expiresAt: session_expiry,
-        });
+        clearAuthCookies(res);
+        const err = new createHttpError(401, "session expired login again!");
+        throw err;
     } else {
         session = await sessionService.updateSession(sessionId, {
             userId: isvalid.id,
