@@ -15,6 +15,12 @@ const ebookSchema = Schema({
         type: String,
         trim: true,
     },
+    price: {
+        type: Number,
+        required: true,
+        min: 0,
+        default: 0,
+    },
     published: {
         type: Boolean,
     },

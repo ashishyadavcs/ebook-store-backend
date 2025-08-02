@@ -28,10 +28,28 @@ router.post("/create-order", authenticate, async (req, res, next) => {
     }
 });
 router.get("/payments", authenticate, async (req, res, next) => {
+    const { role, id } = req.user;
     try {
-        const payments = await Payment.find();
+        let payments;
+        if (role === "admin") {
+            payments = await Payment.find();
+        } else {
+            payments = await Payment.find({ user: id });
+        }
         res.status(200).json({
             data: payments,
+            success: true,
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+router.get("/payments/:id", authenticate, async (req, res, next) => {
+    const { id } = req.params;
+    try {
+        const payment = await Payment.findById(id);
+        res.status(200).json({
+            data: payment,
             success: true,
         });
     } catch (err) {
