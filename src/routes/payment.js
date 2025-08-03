@@ -71,7 +71,7 @@ router.post("/verify-payment", authenticate, async (req, res, next) => {
                 user: req.user.id,
                 orderId: orderid,
                 paymentId: paymentid,
-                status: "succeeded",
+                status: "paid",
                 ebooks: ebooks,
                 amount,
                 currency: "INR",
