@@ -21,6 +21,10 @@ const userschema = new mongoose.Schema({
         enum: ["user", "admin", "author"],
         default: "user",
     },
+    verified: {
+        type: Boolean,
+        default: false,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
