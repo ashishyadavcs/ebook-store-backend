@@ -69,4 +69,24 @@ export class UserController {
             next(err);
         }
     }
+    async sendEmailOtp(req, res, next) {
+        try {
+            const { email } = req.body;
+            const user = await userService.findByEmail(email);
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found",
+                });
+            }
+            await userService.sendOtp(email);
+            res.status(200).json({
+                success: true,
+                message: "OTP sent successfully",
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+    async verifyEmailOtp(req, res, next) {}
 }
