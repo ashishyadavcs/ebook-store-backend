@@ -4,7 +4,7 @@ import templates from "../email-templates/index.js";
 import crypto from "crypto";
 import OTP from "../models/otp.js";
 import User from "../models/user.js";
-const { otpTemplate, promotion } = templates;
+const { otpTemplate, promotion, contactTemplate } = templates;
 export class EmailController {
     generateOTP() {
         return crypto.randomInt(1000, 9999).toString(); //4 digit
@@ -38,7 +38,7 @@ export class EmailController {
             }
             const transporter = this.createTransporter();
             const emailOptions = {
-                from: "ebookstore@gmail.com",
+                from: `Ebook Store`,
                 to: email,
                 subject: "Ebookstore - Email Verification Code",
                 html: otpTemplate(otp, name),
@@ -69,13 +69,30 @@ export class EmailController {
 
     async sendEmail(req, res, next) {
         try {
-            const { from = "ebookstore@gmail.com", to, subject, body: text, type } = req.body;
+            const {
+                from = "ebookstore@gmail.com",
+                name = "",
+                mobile = "",
+                subject,
+                body = "",
+                type,
+            } = req.body;
             const transporter = this.createTransporter();
             const emailOption = {
-                from,
-                to,
+                from: type == "contact" ? from : `Ebook Store <${from}>`,
+                to: "ashishbhu221306@gmail.com",
                 subject: `ebookstore - ${subject}`,
-                ...(type == "contact" ? { text } : { html: promotion() }),
+                ...(type == "contact"
+                    ? {
+                          html: contactTemplate({
+                              email: from,
+                              subject,
+                              message: body,
+                              mobile,
+                              name,
+                          }),
+                      }
+                    : { html: promotion() }),
             };
             await transporter.sendMail(emailOption);
             res.status(200).json({
@@ -83,6 +100,7 @@ export class EmailController {
                 message: "email sent successfully",
             });
         } catch (err) {
+            console.log(err);
             next(err);
         }
     }
