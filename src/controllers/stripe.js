@@ -84,6 +84,8 @@ export class StripeController {
                         orderId: checkoutSessionCompleted.id,
                         paymentId: checkoutSessionCompleted.payment_intent,
                         status: "paid",
+                        paymentGateway: "stripe",
+                        paymentMethod: checkoutSessionCompleted?.payment_method,
                         ebooks: ebooks,
                         amount,
                         currency: "INR",
