@@ -16,5 +16,6 @@ const config = {
     RAZORPAY_KEYSECRET: process.env.RAZORPAY_KEYSECRET,
     EMAIL_USER: process.env.EMAIL_USER,
     EMAIL_PASS: process.env.EMAIL_PASS,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
 };
 export default config;

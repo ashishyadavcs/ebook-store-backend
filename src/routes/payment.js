@@ -4,7 +4,11 @@ import crypto from "crypto";
 import config from "../config/index.js";
 import Payment from "../models/payment.js";
 import { authenticate } from "../middleware/authenticate.js";
+import { StripeController } from "../controllers/stripe.js";
+import express from "express";
+
 const router = Router();
+const stripeController = new StripeController();
 
 router.post("/create-order", authenticate, async (req, res, next) => {
     const razorpay = new Razorpay({
@@ -91,6 +95,19 @@ router.post("/verify-payment", authenticate, async (req, res, next) => {
             message: "payment failed",
         });
     }
+});
+
+// Stripe Routes
+router.post("/create-stripe-session", authenticate, (req, res, next) => {
+    stripeController.createCheckoutSession(req, res, next);
+});
+
+router.post("/stripe-webhook", express.raw({ type: "application/json" }), (req, res, next) => {
+    stripeController.webhook(req, res, next);
+});
+
+router.get("/verify-stripe-payment", authenticate, (req, res, next) => {
+    stripeController.verifyPayment(req, res, next);
 });
 
 export default router;
