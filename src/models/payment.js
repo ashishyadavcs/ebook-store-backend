@@ -8,7 +8,7 @@ const paymentSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    ebooks: [{ type: Types.ObjectId, ref: "Ebook", required: true }],
+    ebooks: [{ type: Types.ObjectId, ref: "Ebook" }],
     paymentId: {
         type: String,
         required: true,

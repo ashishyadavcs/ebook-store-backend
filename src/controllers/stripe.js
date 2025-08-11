@@ -140,7 +140,7 @@ export class StripeController {
                         status: "paid",
                         paymentGateway: "stripe",
                         paymentMethod: payment?.payment_method,
-                        ebooks: ebooks ? JSON.parse(ebooks) : [],
+                        ebooks: [],
                         amount: amount ? Number(amount) : 0,
                         currency: payment?.currency ? payment.currency.toUpperCase() : "INR",
                     });
