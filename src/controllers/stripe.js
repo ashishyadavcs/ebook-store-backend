@@ -137,7 +137,7 @@ export class StripeController {
                         user: userId,
                         orderId: payment?.id,
                         paymentId: payment?.id, // payment_intent.succeeded event uses payment.id
-                        status: payment?.status,
+                        status: "paid",
                         paymentGateway: "stripe",
                         paymentMethod: payment?.payment_method,
                         ebooks: ebooks ? JSON.parse(ebooks) : [],
