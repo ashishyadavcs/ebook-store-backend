@@ -25,6 +25,7 @@ export class StripeController {
                     userId: req.user.id,
                     email: req.user.email,
                     ebooks: JSON.stringify(cart.map(item => item.id)),
+                    amount: cart.reduce((total, item) => total + item.price * item.quantity, 0),
                 },
                 line_items: cart.map(item => ({
                     price_data: {
@@ -94,20 +95,19 @@ export class StripeController {
                 });
             } else {
                 const isPaid = await Payment.findOne({ orderId: session_id });
-                if (isPaid) {
-                    return res.status(200).json({
+                if (!isPaid) {
+                    return res.status(404).json({
                         success: false,
                         message: "Payment not found",
                     });
                 }
-                return res.status(404).json({
+                return res.status(200).json({
                     success: true,
                     data: isPaid,
                     message: "Payment is verified",
                 });
             }
         } catch (err) {
-            console.log(err);
             next(err);
         }
     }
