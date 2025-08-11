@@ -22,10 +22,12 @@ export class StripeController {
                 customer_email: req.user.email,
                 return_url: returnUrl,
                 metadata: {
-                    userId: req.user.id,
-                    email: req.user.email,
-                    ebooks: JSON.stringify(cart.map(item => item.id)),
-                    amount: cart.reduce((total, item) => total + item.price * item.quantity, 0),
+                    userId: String(req.user.id),
+                    email: String(req.user.email),
+                    ebooks: JSON.stringify(cart.map(item => String(item._id))),
+                    amount: cart
+                        .reduce((total, item) => total + item.price * item.quantity, 0)
+                        .toString(),
                 },
                 line_items: cart.map(item => ({
                     price_data: {
@@ -139,7 +141,7 @@ export class StripeController {
                         status: "paid",
                         paymentGateway: "stripe",
                         paymentMethod: payment?.payment_method,
-                        ebooks: [],
+                        ebooks: JSON.parse(ebooks) || [],
                         amount: amount ? Number(amount) : 0,
                         currency: payment?.currency ? payment.currency.toUpperCase() : "INR",
                     });
