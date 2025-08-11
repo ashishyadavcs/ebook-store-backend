@@ -69,7 +69,7 @@ export class StripeController {
             event = stripe.webhooks.constructEvent(
                 req.rawBody || req.body, // Use rawBody if available (for express.raw middleware)
                 sig,
-                config.STRIPE_WEBHOOK_SECRET
+                config.STRIPE_SECRET_KEY
             );
         } catch (err) {
             next(err);
@@ -81,8 +81,8 @@ export class StripeController {
                 try {
                     const payment = new Payment({
                         user: req.user.id,
-                        orderId: checkoutSessionCompleted.id,
-                        paymentId: checkoutSessionCompleted.payment_intent,
+                        orderId: checkoutSessionCompleted?.id,
+                        paymentId: checkoutSessionCompleted?.payment_intent,
                         status: "paid",
                         paymentGateway: "stripe",
                         paymentMethod: checkoutSessionCompleted?.payment_method,
