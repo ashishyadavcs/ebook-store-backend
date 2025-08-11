@@ -129,6 +129,7 @@ export class StripeController {
 
         switch (event.type) {
             case "payment_intent.succeeded":
+            case "checkout.session.completed":
                 const payment = event.data.object;
                 const { amount, ebooks, userId } = payment.metadata;
                 try {
