@@ -132,18 +132,18 @@ export class StripeController {
                 const payment = event.data.object;
                 const { amount, ebooks, userId } = payment.metadata;
                 try {
-                    const payment = new Payment({
+                    const paymentData = new Payment({
                         user: userId,
                         orderId: payment?.id,
-                        paymentId: payment?.payment_intent,
+                        paymentId: payment?.id, // payment_intent.succeeded event uses payment.id
                         status: payment?.status,
                         paymentGateway: "stripe",
                         paymentMethod: payment?.payment_method,
-                        ebooks: ebooks,
-                        amount,
-                        currency: "INR",
+                        ebooks: ebooks ? JSON.parse(ebooks) : [],
+                        amount: amount ? Number(amount) : 0,
+                        currency: payment?.currency ? payment.currency.toUpperCase() : "INR",
                     });
-                    await payment.save();
+                    await paymentData.save();
                     return res.status(200).json({
                         success: true,
                         message: "payment successful",
@@ -154,6 +154,6 @@ export class StripeController {
                 break;
         }
 
-        res.status(200).json({ success: true });
+        res.status(200).json({ success: true, message: "payment successful" });
     }
 }
