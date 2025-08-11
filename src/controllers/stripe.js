@@ -37,7 +37,7 @@ export class StripeController {
                         },
                         unit_amount: Math.round(item.price * 100), // Ensure amount is integer
                     },
-                    quantity: 1,
+                    quantity: item.quantity,
                 })),
             });
             return res.status(200).json({
@@ -136,7 +136,7 @@ export class StripeController {
                         user: userId,
                         orderId: payment?.id,
                         paymentId: payment?.payment_intent,
-                        status: "paid",
+                        status: payment?.status,
                         paymentGateway: "stripe",
                         paymentMethod: payment?.payment_method,
                         ebooks: ebooks,
