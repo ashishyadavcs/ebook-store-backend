@@ -93,7 +93,7 @@ export class StripeController {
                     message: "Payment is verified",
                 });
             } else {
-                const isPaid = await Payment.findOne({ paymentId: session?.payment_intent });
+                const isPaid = await Payment.findOne({ orderId: session_id });
                 if (isPaid) {
                     return res.status(200).json({
                         success: false,
@@ -135,7 +135,7 @@ export class StripeController {
                     const paymentData = new Payment({
                         user: userId,
                         orderId: payment?.id,
-                        paymentId: payment?.id, // payment_intent.succeeded event uses payment.id
+                        paymentId: payment?.payment_intent,
                         status: "paid",
                         paymentGateway: "stripe",
                         paymentMethod: payment?.payment_method,
