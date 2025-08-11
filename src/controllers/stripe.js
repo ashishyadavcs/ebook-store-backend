@@ -11,8 +11,8 @@ export class StripeController {
             const baseUrl =
                 successUrl || req.headers.origin || config.APP_URL || "http://localhost:3000";
             const returnUrl = baseUrl.startsWith("http")
-                ? `${baseUrl}/payment/return?session_id={CHECKOUT_SESSION_ID}`
-                : `https://${baseUrl}/payment/return?session_id={CHECKOUT_SESSION_ID}`;
+                ? `${baseUrl}/payment/verify?session_id={CHECKOUT_SESSION_ID}`
+                : `https://${baseUrl}/payment/verify?session_id={CHECKOUT_SESSION_ID}`;
 
             const session = await stripe.checkout.sessions.create({
                 ui_mode: "embedded",
@@ -21,6 +21,12 @@ export class StripeController {
                 currency: currency.toLowerCase(),
                 customer_email: req.user.email,
                 return_url: returnUrl,
+                metadata: {
+                    userId: req.user.id,
+                    email: req.user.email,
+                    ebooks: JSON.stringify(cart.map(item => item.id)),
+                    amount: Math.round(cart.reduce((total, item) => total + item.price * 100, 0)),
+                },
                 line_items: cart.map(item => ({
                     price_data: {
                         currency: currency.toLowerCase(), // Ensure currency is lowercase
@@ -39,6 +45,7 @@ export class StripeController {
                 clientSecret: session.client_secret,
             });
         } catch (err) {
+            console.log(err);
             next(err);
         }
     }
@@ -46,17 +53,62 @@ export class StripeController {
     async verifyPayment(req, res, next) {
         try {
             const { session_id } = req.query;
-            const isPaid = await Payment.findOne({ orderId: session_id });
-            if (!isPaid) {
-                const err = new createHttpError(404, "order not found");
-                throw err;
+            if (false) {
+                //for dev mode
+                const session = await stripe.checkout.sessions.retrieve(session_id);
+                const { ebooks } = session;
+                if (!session || session.payment_status !== "paid") {
+                    const err = new createHttpError(
+                        400,
+                        "Payment not completed or session not found"
+                    );
+                    throw err;
+                }
+                const isPayment = await Payment.findOne({ paymentId: session?.payment_intent });
+                if (isPayment) {
+                    return res.status(200).json({
+                        success: true,
+                        data: isPayment,
+                        message: "Payment is verified",
+                    });
+                }
+                const payment = new Payment({
+                    user: req.user.id,
+                    orderId: session?.id,
+                    paymentId: session?.payment_intent,
+                    status: "paid",
+                    paymentGateway: "stripe",
+                    paymentMethod: session?.payment_method,
+                    ebooks,
+                    amount: 3000,
+                    currency: "INR",
+                });
+                const isPaid = await payment.save();
+                if (!isPaid) {
+                    const err = new createHttpError(404, "order not found");
+                    throw err;
+                }
+                return res.status(200).json({
+                    success: true,
+                    data: isPaid,
+                    message: "Payment is verified",
+                });
+            } else {
+                const isPaid = await Payment.findOne({ paymentId: session?.payment_intent });
+                if (isPaid) {
+                    return res.status(200).json({
+                        success: false,
+                        message: "Payment not found",
+                    });
+                }
+                return res.status(404).json({
+                    success: true,
+                    data: isPaid,
+                    message: "Payment is verified",
+                });
             }
-            return res.status(200).json({
-                success: true,
-                data: isPaid,
-                message: "Payment is verified",
-            });
         } catch (err) {
+            console.log(err);
             next(err);
         }
     }
@@ -76,16 +128,17 @@ export class StripeController {
         }
 
         switch (event.type) {
-            case "checkout.session.completed":
-                const checkoutSessionCompleted = event.data.object;
+            case "payment_intent.succeeded":
+                const payment = event.data.object;
+                const { amount, ebooks, userId } = payment.metadata;
                 try {
                     const payment = new Payment({
-                        user: req.user.id,
-                        orderId: checkoutSessionCompleted?.id,
-                        paymentId: checkoutSessionCompleted?.payment_intent,
+                        user: userId,
+                        orderId: payment?.id,
+                        paymentId: payment?.payment_intent,
                         status: "paid",
                         paymentGateway: "stripe",
-                        paymentMethod: checkoutSessionCompleted?.payment_method,
+                        paymentMethod: payment?.payment_method,
                         ebooks: ebooks,
                         amount,
                         currency: "INR",

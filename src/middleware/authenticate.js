@@ -20,7 +20,6 @@ export const authenticate = async (req, res, next) => {
                 throw error;
             }
             req.user = isVerified;
-            console.log(req.user);
             next();
         }
     } catch (err) {
