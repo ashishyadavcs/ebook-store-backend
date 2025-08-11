@@ -36,7 +36,13 @@ app.use(
     })
 );
 app.use(cookieParser());
-app.use(express.json());
+// Exclude stripe-webhook route from express.json middleware
+app.use((req, res, next) => {
+    if (req.path === "/stripe-webhook") {
+        return next();
+    }
+    express.json()(req, res, next);
+});
 app.use(
     express.urlencoded({
         extended: true,
