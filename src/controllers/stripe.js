@@ -46,7 +46,7 @@ export class StripeController {
     async verifyPayment(req, res, next) {
         try {
             const { session_id } = req.query;
-            const isPaid = await Payment.findOne({ orderId: session_id, status: "paid" });
+            const isPaid = await Payment.findOne({ orderId: session_id });
             if (!isPaid) {
                 const err = new createHttpError(404, "order not found");
                 throw err;
@@ -69,7 +69,7 @@ export class StripeController {
             event = stripe.webhooks.constructEvent(
                 req.rawBody || req.body, // Use rawBody if available (for express.raw middleware)
                 sig,
-                config.STRIPE_SECRET_KEY
+                config.STRIPE_WEBHOOK_SECRET_KEY
             );
         } catch (err) {
             next(err);
