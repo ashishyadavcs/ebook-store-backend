@@ -22,9 +22,9 @@ export class StripeController {
                 customer_email: req.user.email,
                 return_url: returnUrl,
                 metadata: {
-                    userId: String(req.user.id),
+                    userId: String(req.user.userId),
                     email: String(req.user.email),
-                    ebooks: JSON.stringify(cart.map(item => String(item._id))),
+                    ebooks: JSON.stringify(cart.map(item => item._id)),
                     amount: cart
                         .reduce((total, item) => total + item.price * item.quantity, 0)
                         .toString(),
