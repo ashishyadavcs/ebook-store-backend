@@ -25,7 +25,6 @@ export class StripeController {
                     userId: req.user.id,
                     email: req.user.email,
                     ebooks: JSON.stringify(cart.map(item => item.id)),
-                    amount: Math.round(cart.reduce((total, item) => total + item.price * 100, 0)),
                 },
                 line_items: cart.map(item => ({
                     price_data: {
@@ -53,9 +52,9 @@ export class StripeController {
     async verifyPayment(req, res, next) {
         try {
             const { session_id } = req.query;
+            const session = await stripe.checkout.sessions.retrieve(session_id);
             if (false) {
                 //for dev mode
-                const session = await stripe.checkout.sessions.retrieve(session_id);
                 const { ebooks } = session;
                 if (!session || session.payment_status !== "paid") {
                     const err = new createHttpError(
