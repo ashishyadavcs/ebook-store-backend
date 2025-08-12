@@ -2,6 +2,7 @@ import stripe from "../config/stripe.js";
 import config from "../config/index.js";
 import Payment from "../models/payment.js";
 import createHttpError from "http-errors";
+import { sendDetailMessage } from "../utils/whatsapp/order-confirmation.js";
 
 export class StripeController {
     async createCheckoutSession(req, res, next) {
@@ -65,7 +66,9 @@ export class StripeController {
                     throw err;
                 }
                 const isPayment = await Payment.findOne({ paymentId: session?.payment_intent });
+
                 if (isPayment) {
+                    await sendDetailMessage(isPayment._id, req.user.name);
                     return res.status(200).json({
                         success: true,
                         data: isPayment,
@@ -101,6 +104,7 @@ export class StripeController {
                         message: "Payment not found",
                     });
                 }
+                await sendDetailMessage(isPaid._id, req.user.name);
                 return res.status(200).json({
                     success: true,
                     data: isPaid,
@@ -143,8 +147,8 @@ export class StripeController {
                         amount: amount ? Number(amount) : 0,
                         currency: payment?.currency ? payment.currency.toUpperCase() : "INR",
                     });
-                    await paymentData.save();
-                    return res.status(200).json({
+                    const saved = await paymentData.save();
+                    res.status(200).json({
                         success: true,
                         message: "payment successful",
                     });

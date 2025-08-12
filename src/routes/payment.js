@@ -81,7 +81,7 @@ router.post("/verify-payment", authenticate, async (req, res, next) => {
                 currency: "INR",
             });
             await payment.save();
-
+            await sendDetailMessage(payment._id, req.user.name);
             return res.status(200).json({
                 success: true,
                 message: "payment verified",

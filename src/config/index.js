@@ -18,5 +18,7 @@ const config = {
     EMAIL_PASS: process.env.EMAIL_PASS,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET_KEY: process.env.STRIPE_WEBHOOK_SECRET_KEY,
+    WHATSAPP_TOKEN: process.env.WHATSAPP_TOKEN,
+    WHATSAPP_PHONE_NUMBER_ID: process.env.WHATSAPP_PHONE_NUMBER_ID,
 };
 export default config;

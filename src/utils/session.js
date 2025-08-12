@@ -56,6 +56,7 @@ export const sessionFlow = async (req, res, next, user, deviceIdLogin) => {
         sessionId: session._id,
         role: user.role,
         email: user.email,
+        name: user.name,
     });
     createTokenCookies(res, tokens, user, deviceIdLogin);
     return {
