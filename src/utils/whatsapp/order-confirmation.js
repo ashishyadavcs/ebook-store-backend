@@ -19,9 +19,7 @@ export const sendDetailMessage = async (orderid, name = "customer") => {
                     type: "button",
                     sub_type: "url",
                     index: "0",
-                    parameters: [
-                        { type: "text", text: `${config.APP_URL}/dashboard/orders/${orderid}` },
-                    ],
+                    parameters: [{ type: "text", text: `/dashboard/orders/${orderid}` }],
                 },
             ],
         },
