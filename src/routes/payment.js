@@ -6,6 +6,7 @@ import Payment from "../models/payment.js";
 import { authenticate } from "../middleware/authenticate.js";
 import { StripeController } from "../controllers/stripe.js";
 import express from "express";
+import { sendDetailMessage } from "../utils/whatsapp/order-confirmation.js";
 
 const router = Router();
 const stripeController = new StripeController();
