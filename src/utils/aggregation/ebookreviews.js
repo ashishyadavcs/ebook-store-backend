@@ -33,6 +33,17 @@ export const ebookReviewsWithUser = [
             localField: "_id",
             foreignField: "ebook",
             as: "reviews",
+            pipeline: [
+                {
+                    $project: {
+                        _id: 1,
+                        rating: 1,
+                        comment: 1,
+                        user: 1,
+                        createdAt: 1,
+                    },
+                },
+            ],
         },
     },
     {

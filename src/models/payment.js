@@ -6,6 +6,7 @@ const paymentSchema = mongoose.Schema({
     },
     orderId: {
         type: String,
+        unique: true,
         required: true,
     },
     ebooks: [{ type: Types.ObjectId, ref: "Ebook" }],
