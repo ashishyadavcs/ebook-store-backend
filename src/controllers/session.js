@@ -29,8 +29,8 @@ export class SessionController {
 
     async revokeAllDevices(req, res, next) {
         try {
-            const userId = req.user.userId;
-            const currentDeviceId = req.user.deviceId;
+            const userId = req.user.id;
+            const currentDeviceId = req.cookies.deviceId;
             await sessionService.deleteAllSessions(userId, currentDeviceId);
             res.json({ success: true, message: "All other devices revoked successfully" });
         } catch (error) {

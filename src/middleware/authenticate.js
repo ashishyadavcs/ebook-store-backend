@@ -23,7 +23,6 @@ export const authenticate = async (req, res, next) => {
             next();
         }
     } catch (err) {
-        console.error("refreshtoken error:", err);
         next(err);
     }
 };

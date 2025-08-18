@@ -5,8 +5,8 @@ export class SessionService {
         return await session.save();
     }
 
-    async deleteSession(sessionId) {
-        return await Session.findByIdAndDelete(sessionId);
+    async deleteSession(deviceId) {
+        return await Session.findOneAndDelete({ deviceId });
     }
     async deleteAllSessions(userId, currentDeviceId) {
         return await Session.deleteMany({ userId, deviceId: { $ne: currentDeviceId } });
