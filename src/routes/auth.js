@@ -17,10 +17,6 @@ router.post("/logout", (req, res, next) => {
     authController.logout(req, res, next);
 });
 
-router.post("/refreshtoken", (req, res, next) => {
-    authController.refresh(req, res, next);
-});
-
 router.post("/google", async (req, res, next) => {
     authController.googleLogin(req, res, next);
 });
