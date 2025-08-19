@@ -5,23 +5,32 @@ import { Userservice } from "../services/user.js";
 const userService = new Userservice();
 const ebookService = new EbookService();
 export class UserController {
-    async getUserWithEbooks(req, res, next) {
+    async getUserEbooks(req, res, next) {
         try {
-            let id = "";
-            if (req.params.id) {
-                id = req.params.id;
-            } else {
-                id = req.user.id;
-            }
-            const user = await userService.findById(id);
+            const id = req.user.id;
             const paidEbooks = await Payment.find({ user: id }).populate("ebooks").exec();
             const ebooks = paidEbooks.flatMap(payment => payment.ebooks);
             return res.status(200).json({
                 success: true,
-                data: {
-                    user,
-                    ebooks,
-                },
+                data: ebooks,
+            });
+        } catch (err) {
+            console.log(err);
+            next(err);
+        }
+    }
+    async getUser(req, res, next) {
+        try {
+            const user = userService.findById(req.user.id);
+            if (!user) {
+                return res.status(404).json({
+                    success: false,
+                    message: "User not found",
+                });
+            }
+            return res.status(200).json({
+                success: true,
+                data: user,
             });
         } catch (err) {
             next(err);
