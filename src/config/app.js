@@ -2,19 +2,14 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import config from "./index.js";
-
-import authRouter from "../routes/auth.js";
-import ebookRoute from "../routes/ebook.js";
-import reviewRoute from "../routes/review.js";
-import userRoute from "../routes/user.js";
-import paymentRoute from "../routes/payment.js";
-import emailRoute from "../routes/email.js";
-import sessionRoute from "../routes/sessions.js";
 import { errorhandler } from "../middleware/errorHandler.js";
 import { limiter, securityHeaders } from "./security.js";
+import { setupSwagger } from "../swagger/index.js";
+import routes from "../routes/index.js";
 // import logger from "./logger.js";
 const app = express();
-
+//swagger
+setupSwagger(app);
 //middlewares
 app.set("trust proxy", 1);
 app.use(securityHeaders);
@@ -50,13 +45,7 @@ app.use(
 );
 
 //routes
-app.use(authRouter);
-app.use(ebookRoute);
-app.use(reviewRoute);
-app.use(userRoute);
-app.use(paymentRoute);
-app.use(emailRoute);
-app.use(sessionRoute);
+app.use("/api/v1", routes);
 //error handler should be last middlware
 app.use((err, req, res, next) => {
     errorhandler(err, req, res, next);
