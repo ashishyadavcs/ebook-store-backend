@@ -21,7 +21,7 @@ export class UserController {
     }
     async getUser(req, res, next) {
         try {
-            const user = userService.findById(req.user.id);
+            const user = await userService.findById(req.user.id);
             if (!user) {
                 return res.status(404).json({
                     success: false,
