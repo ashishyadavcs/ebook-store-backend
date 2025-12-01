@@ -30,7 +30,7 @@ app.use(limiter);
 // });
 app.use(
     cors({
-        origin: config.APP_URL,
+        origin: [config.APP_URL, "https://ebook-store-fn6w5p4kp-ashish221306s-projects.vercel.app"],
         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
         credentials: true,
     })
